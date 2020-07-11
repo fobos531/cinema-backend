@@ -22,9 +22,12 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.23",
     "nodemailer": "^6.4.10",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
-    "dotenv": "^8.2.0"
+    "eslint": "^7.4.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0"
   }
 }
