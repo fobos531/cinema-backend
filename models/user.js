@@ -1,21 +1,24 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-underscore-dangle */
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const userSchema = new mongoose.Schema({
   user_type: {
     type: String,
     required: true,
-    enum: ['administrator', 'registeredUser', 'guestUser'],
+    enum: ['administrator', 'registeredUser'],
   },
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   username: {
     type: String,
     required: true,
     minlength: 3,
+    unique: true,
   },
   passwordHash: {
     type: String,
@@ -36,5 +39,7 @@ userSchema.set('toJSON', {
   // eslint-disable-next-line comma-dangle
   }
 });
+
+userSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model('User', userSchema);

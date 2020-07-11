@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const movieSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
+    unique: true,
   },
   director: {
     type: String,
@@ -30,5 +32,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
   },
 });
+
+movieSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model('Movie', movieSchema);
