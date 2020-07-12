@@ -17,6 +17,10 @@ const cinemaSchema = {
     type: Number,
     required: false,
   },
+  image: {
+    type: String,
+    required: true,
+  },
 };
 
 cinemaSchema.plugin(uniqueValdiator);

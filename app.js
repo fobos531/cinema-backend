@@ -3,9 +3,7 @@
 const mongoose = require('mongoose');
 const cors = require('cors');
 const express = require('express');
-const passport = require('passport');
 const config = require('./config/config');
-const authentication = require('./middleware/authentication');
 const moviesRouter = require('./controllers/movies');
 const usersRouter = require('./controllers/users');
 const loginRouter = require('./controllers/login');
@@ -18,7 +16,7 @@ mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology
 
 app.use(cors());
 app.use(express.json());
- 
+
 // I STILL NEED TO START USING AUTHENTICATION
 
 app.use('/api/movies', moviesRouter);
