@@ -1,32 +1,78 @@
+/* eslint-disable function-paren-newline */
 /* eslint-disable consistent-return */
 /* eslint-disable no-underscore-dangle */
 const moviesRouter = require('express').Router();
 const jwt = require('jsonwebtoken');
+const imdb = require('imdb-api');
+const multer = require('multer');
+const cloudinary = require('cloudinary');
 const Movie = require('../models/movie');
+
+const storage = multer.diskStorage({
+  filename(req, file, callback) {
+    callback(null, Date.now() + file.originalname);
+  },
+});
+const imageFilter = function (req, file, cb) {
+  // accept image files only
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+    return cb(new Error('Only image files are allowed!'), false);
+  }
+  cb(null, true);
+};
+const upload = multer({ storage, fileFilter: imageFilter });
 
 moviesRouter.get('/', async (request, response) => {
   const movies = await Movie.find({});
   response.json(movies.map((movie) => movie.toJSON()));
 });
 
-const getTokenFrom = (request) => {
-  const authorization = request.get('authorization');
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7);
-  }
-  return null;
-};
-
-moviesRouter.post('/', async (request, response) => {
-  const token = getTokenFrom(request);
-  const decodedToken = jwt.verify(token, process.env.SECRET);
-  if (!token || !decodedToken.id) {
-    return response.status(401).send({ error: 'missing or invalid token' });
-  }
-  const movie = new Movie(request.body);
-  const addedMovie = await movie.save();
-  response.status(201).json(addedMovie);
+moviesRouter.get('/:id', async (request, response) => {
+  console.log(request.params.id)
+  const foundMovie = await Movie.findById(request.params.id);
+  console.log(foundMovie)
+  response.status(200).json(foundMovie);
 });
+
+cloudinary.config({
+  cloud_name: 'cinemaapp',
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+moviesRouter.post('/', upload.single('moviePoster'), async (request, response) => {
+  let movieData;
+  // First, fetch movie data
+  try {
+    movieData = await imdb.get({ name: `${request.body.movieName}` }, { apiKey: '2af0120f', timeout: 30000 });
+  } catch (exception) {
+    return response.status(400).json(exception);
+  }
+  let addedMovie;
+  // Then, if successful, upload the movie poster to cloudinary and save the movie
+  console.log(movieData);
+  cloudinary.uploader.upload(request.file.path, async (result) => {
+    const movie = new Movie({
+      title: movieData.title,
+      director: movieData.director,
+      coverArt: movieData.poster,
+      backdropImage: result.url,
+      genre: movieData.genres,
+      actors: movieData.actors,
+      summary: movieData.plot,
+      releaseDate: movieData.released,
+    });
+    addedMovie = await movie.save();
+  });
+  response.json(addedMovie);
+});
+
+moviesRouter.delete('/:id', async (request, response) => {
+  await Movie.findOneAndDelete({ _id: request.params.id });
+  response.status(204).send({ info: 'movie deleted' });
+});
+
+
 
 moviesRouter.put('/:id', async (request, response) => {
   const token = getTokenFrom(request);
@@ -43,5 +89,7 @@ moviesRouter.get('/deleteAll', async (request, response) => {
   await Movie.deleteMany({});
   response.send(200).json({ status: 'deleted' });
 });
+
+
 
 module.exports = moviesRouter;

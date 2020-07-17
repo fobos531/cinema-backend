@@ -1,12 +1,13 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-param-reassign */
 /* eslint-disable max-len */
 // Pretpostavljamo da svako kino ima samo jednu dvoranu, pa prema tome ne kreiramo i modele za dvorane za prikazivanje itd.
 const mongoose = require('mongoose');
-const uniqueValdiator = require('mongoose-unique-validator');
+const uniqueValidator = require('mongoose-unique-validator');
 
-const cinemaSchema = {
+const cinemaSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
     unique: true,
   },
   city: {
@@ -21,8 +22,16 @@ const cinemaSchema = {
     type: String,
     required: true,
   },
-};
+});
 
-cinemaSchema.plugin(uniqueValdiator);
+cinemaSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  }
+})
 
-module.exports = mongoose.Model('Cinema', cinemaSchema);
+cinemaSchema.plugin(uniqueValidator);
+
+module.exports = mongoose.model('Cinema', cinemaSchema);

@@ -1,5 +1,8 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-param-reassign */
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
+const random = require('mongoose-simple-random');
 
 const movieSchema = new mongoose.Schema({
   title: {
@@ -12,6 +15,10 @@ const movieSchema = new mongoose.Schema({
     required: true,
   },
   coverArt: {
+    type: String,
+    required: true,
+  },
+  backdropImage: {
     type: String,
     required: true,
   },
@@ -33,6 +40,15 @@ const movieSchema = new mongoose.Schema({
   },
 });
 
+movieSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  },
+});
+
 movieSchema.plugin(uniqueValidator);
+movieSchema.plugin(random);
 
 module.exports = mongoose.model('Movie', movieSchema);

@@ -1,47 +1,54 @@
-/* eslint-disable consistent-return */
-/* eslint-disable no-underscore-dangle */
-const moviesRouter = require('express').Router();
-const jwt = require('jsonwebtoken');
-const Movie = require('../models/movie');
+const cinemasRouter = require('express').Router();
+const multer = require('multer');
+const cloudinary = require('cloudinary');
+const Cinema = require('../models/cinema');
 
-moviesRouter.get('/', async (request, response) => {
-  const movies = await Movie.find({});
-  response.json(movies.map((movie) => movie.toJSON()));
+const storage = multer.diskStorage({
+  filename(req, file, callback) {
+    callback(null, Date.now() + file.originalname);
+  },
 });
-
-const getTokenFrom = (request) => {
-  const authorization = request.get('authorization');
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7);
+const imageFilter = function (req, file, cb) {
+  // accept image files only
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+    return cb(new Error('Only image files are allowed!'), false);
   }
-  return null;
+  cb(null, true);
 };
+const upload = multer({ storage, fileFilter: imageFilter });
 
-moviesRouter.post('/', async (request, response) => {
-  const token = getTokenFrom(request);
-  const decodedToken = jwt.verify(token, process.env.SECRET);
-  if (!token || !decodedToken.id) {
-    return response.status(401).send({ error: 'missing or invalid token' });
-  }
-  const movie = new Movie(request.body);
-  const addedMovie = await movie.save();
-  response.status(201).json(addedMovie);
+cloudinary.config({
+  cloud_name: 'cinemaapp',
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-moviesRouter.put('/:id', async (request, response) => {
-  const token = getTokenFrom(request);
-  const decodedToken = jwt.verify(token, process.env.SECRET);
-  if (!token || !decodedToken.id) {
-    return response.status(401).send({ error: 'missing or invalid token' });
-  }
-  const newMovie = request.body;
-  const movieToUpdate = await Movie.findByIdAndUpdate(request.params.id, newMovie, { new: true });
-  response.json(movieToUpdate);
+cinemasRouter.post('/', upload.single('image'), (req, res) => {
+  console.log(req.body);
+  cloudinary.uploader.upload(req.file.path, async (result) => {
+    console.log(req.file.path);
+    console.log(result);
+    const newCinema = new Cinema({
+      name: req.body.cinemaName,
+      city: req.body.city,
+      postalCode: req.body.postalCode,
+      image: result.url,
+    });
+    await newCinema.save();
+  });
 });
 
-moviesRouter.get('/deleteAll', async (request, response) => {
-  await Movie.deleteMany({});
-  response.send(200).json({ status: 'deleted' });
+// Get all cinemas
+cinemasRouter.get('/', async (req, res) => {
+  const allCinemas = await Cinema.find({});
+  res.json(allCinemas.map((cinema) => cinema.toJSON()));
 });
 
-module.exports = moviesRouter;
+
+// Delete cinema
+cinemasRouter.delete('/:id', async (request, response) => {
+  await Cinema.findOneAndDelete({ _id: request.params.id });
+  response.status(204).send({ info: 'cinema deleted' });
+});
+
+module.exports = cinemasRouter;
