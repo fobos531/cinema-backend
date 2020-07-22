@@ -38,6 +38,18 @@ const movieSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  cinemas: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Cinema',
+    },
+  ],
+  screeningTimes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'ScreeningTime',
+    },
+  ],
 });
 
 movieSchema.set('toJSON', {

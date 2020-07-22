@@ -23,14 +23,14 @@ const imageFilter = function (req, file, cb) {
 const upload = multer({ storage, fileFilter: imageFilter });
 
 moviesRouter.get('/', async (request, response) => {
-  const movies = await Movie.find({});
+  const movies = await Movie.find({}).populate('cinemas', { name: 1 });
   response.json(movies.map((movie) => movie.toJSON()));
 });
 
 moviesRouter.get('/:id', async (request, response) => {
-  console.log(request.params.id)
-  const foundMovie = await Movie.findById(request.params.id);
-  console.log(foundMovie)
+  console.log(request.params.id);
+  const foundMovie = await Movie.findById(request.params.id).populate('cinemas', { name: 1 }).populate('screeningTimes', { datetime_start: 1, datetime_end: 1 });
+  console.log(foundMovie);
   response.status(200).json(foundMovie);
 });
 

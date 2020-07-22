@@ -4,6 +4,7 @@
 // Pretpostavljamo da svako kino ima samo jednu dvoranu, pa prema tome ne kreiramo i modele za dvorane za prikazivanje itd.
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
+const { Schema } = require('mongoose');
 
 const cinemaSchema = new mongoose.Schema({
   name: {
@@ -22,6 +23,12 @@ const cinemaSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  seats: [
+    {
+      type: Schema.Types.Mixed,
+      required: true,
+    },
+  ],
 });
 
 cinemaSchema.set('toJSON', {

@@ -10,7 +10,8 @@ const usersRouter = require('./controllers/users');
 const loginRouter = require('./controllers/login');
 const cinemasRouter = require('./controllers/cinemas');
 const screeningTimesRouter = require('./controllers/screeningTimes');
-const miscRouter = require('./controllers/misc')
+const miscRouter = require('./controllers/misc');
+const reservationsRouter = require('./controllers/reservations');
 
 const app = express();
 
@@ -22,7 +23,6 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-
 // I STILL NEED TO START USING AUTHENTICATION
 
 app.use('/api/movies', moviesRouter);
@@ -30,6 +30,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/cinemas', cinemasRouter);
 app.use('/api/screeningtimes', screeningTimesRouter);
-app.use('/api/misc', miscRouter)
+app.use('/api/misc', miscRouter);
+app.use('/api/reservations', reservationsRouter);
 
 module.exports = app;

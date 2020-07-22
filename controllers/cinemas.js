@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 const cinemasRouter = require('express').Router();
 const multer = require('multer');
 const cloudinary = require('cloudinary');
@@ -24,7 +25,7 @@ cloudinary.config({
 });
 
 cinemasRouter.post('/', upload.single('image'), (req, res) => {
-  console.log(req.body);
+
   cloudinary.uploader.upload(req.file.path, async (result) => {
     console.log(req.file.path);
     console.log(result);
@@ -34,6 +35,14 @@ cinemasRouter.post('/', upload.single('image'), (req, res) => {
       postalCode: req.body.postalCode,
       image: result.url,
     });
+    for (let i = 1; i <= req.body.numberOfSeats; i++) {
+      const newSeat = {
+        id: i,
+        seat_name: `Seat ${i}`,
+        occupied: 0, // 0 -unoccupied, 1 -currently selected, 2 -occupied 
+      };
+      newCinema.seats = newCinema.seats.concat(newSeat);
+    }
     await newCinema.save();
   });
 });
@@ -43,7 +52,6 @@ cinemasRouter.get('/', async (req, res) => {
   const allCinemas = await Cinema.find({});
   res.json(allCinemas.map((cinema) => cinema.toJSON()));
 });
-
 
 // Delete cinema
 cinemasRouter.delete('/:id', async (request, response) => {
