@@ -29,6 +29,10 @@ const cinemaSchema = new mongoose.Schema({
       required: true,
     },
   ],
+  ticketPrice: {
+    type: Number,
+    required: true,
+  },
 });
 
 cinemaSchema.set('toJSON', {

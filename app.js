@@ -12,6 +12,8 @@ const cinemasRouter = require('./controllers/cinemas');
 const screeningTimesRouter = require('./controllers/screeningTimes');
 const miscRouter = require('./controllers/misc');
 const reservationsRouter = require('./controllers/reservations');
+const authMiddleware = require('./middleware/authentication');
+
 
 const app = express();
 
@@ -29,7 +31,7 @@ app.use('/api/movies', moviesRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/cinemas', cinemasRouter);
-app.use('/api/screeningtimes', screeningTimesRouter);
+app.use('/api/screeningtimes', authMiddleware, screeningTimesRouter); // svi requesti na ovaj dio API-ja moraju biti autenticirani
 app.use('/api/misc', miscRouter);
 app.use('/api/reservations', reservationsRouter);
 

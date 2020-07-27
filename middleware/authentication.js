@@ -5,6 +5,7 @@ const isAuthenticated = async (req, res, next) => {
   try {
     const token = req.header('Authorization').replace('Bearer ', ''); // remove bearer from authorization header to get only the token
     const decodedToken = jwt.verify(token, process.env.SECRET);
+    console.log(decodedToken)
     if (!token || !decodedToken.id) {
       return res.status(401).json({ error: 'token missing or invalid' });
     }
@@ -14,7 +15,7 @@ const isAuthenticated = async (req, res, next) => {
     req.isAuthenticated = true;
     next();
   } catch {
-    res.send(401).send({ error: 'invalid username or password! ' });
+    res.sendStatus(401).send({ error: 'invalid username or password! ' });
   }
 };
 

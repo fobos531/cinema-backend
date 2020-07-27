@@ -3,6 +3,7 @@ const cinemasRouter = require('express').Router();
 const multer = require('multer');
 const cloudinary = require('cloudinary');
 const Cinema = require('../models/cinema');
+const authMiddleware = require('../middleware/authentication');
 
 const storage = multer.diskStorage({
   filename(req, file, callback) {
@@ -24,8 +25,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-cinemasRouter.post('/', upload.single('image'), (req, res) => {
-
+cinemasRouter.post('/', authMiddleware, upload.single('image'), (req, res) => {
   cloudinary.uploader.upload(req.file.path, async (result) => {
     console.log(req.file.path);
     console.log(result);
@@ -34,6 +34,7 @@ cinemasRouter.post('/', upload.single('image'), (req, res) => {
       city: req.body.city,
       postalCode: req.body.postalCode,
       image: result.url,
+      ticketPrice: Number(req.body.ticketPrice),
     });
     for (let i = 1; i <= req.body.numberOfSeats; i++) {
       const newSeat = {
@@ -54,7 +55,7 @@ cinemasRouter.get('/', async (req, res) => {
 });
 
 // Delete cinema
-cinemasRouter.delete('/:id', async (request, response) => {
+cinemasRouter.delete('/:id', authMiddleware, async (request, response) => {
   await Cinema.findOneAndDelete({ _id: request.params.id });
   response.status(204).send({ info: 'cinema deleted' });
 });

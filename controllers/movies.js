@@ -22,6 +22,7 @@ const imageFilter = function (req, file, cb) {
 };
 const upload = multer({ storage, fileFilter: imageFilter });
 
+// All movies
 moviesRouter.get('/', async (request, response) => {
   const movies = await Movie.find({}).populate('cinemas', { name: 1 });
   response.json(movies.map((movie) => movie.toJSON()));

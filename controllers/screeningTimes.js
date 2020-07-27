@@ -1,9 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 const screeningTimesRouter = require('express').Router();
 const ScreeningTime = require('../models/screeningTime');
-const Movie = require('../models/movie'); 
+const Movie = require('../models/movie');
+const authMiddleware = require('../middleware/authentication');
 
-screeningTimesRouter.post('/', async (request, response) => {
+screeningTimesRouter.post('/', authMiddleware, async (request, response) => {
   console.log(request.body);
   const newScreeningTime = new ScreeningTime({
     movie_id: request.body.movie,
@@ -27,8 +28,8 @@ screeningTimesRouter.get('/', async (request, response) => {
   response.json(screeningTimes.map((screeningTime) => screeningTime.toJSON()));
 });
 
-// Delete cinema
-screeningTimesRouter.delete('/:id', async (request, response) => {
+// Delete one
+screeningTimesRouter.delete('/:id', authMiddleware, async (request, response) => {
   await ScreeningTime.findOneAndDelete({ _id: request.params.id });
   response.status(204).send({ info: 'screening time deleted' });
 });
