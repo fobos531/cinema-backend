@@ -62,6 +62,7 @@ moviesRouter.post('/', upload.single('moviePoster'), async (request, response) =
       actors: movieData.actors,
       summary: movieData.plot,
       releaseDate: movieData.released,
+      rating: movieData.rating,
     });
     addedMovie = await movie.save();
   });

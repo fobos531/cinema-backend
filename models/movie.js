@@ -50,6 +50,10 @@ const movieSchema = new mongoose.Schema({
       ref: 'ScreeningTime',
     },
   ],
+  rating: {
+    type: Number,
+    required: true,
+  },
 });
 
 movieSchema.set('toJSON', {

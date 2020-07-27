@@ -44,6 +44,30 @@ reservationsRouter.get('/:id', authMiddleware, async (request, response) => {
   response.status(200).json(allReservations);
 });
 
+reservationsRouter.patch('/rate/:id', async (request, response) => {
+  let reservation = await Reservation.findById(request.params.id);
+  reservation.ownRating = request.body.rating;
+  await reservation.save();
+  // find reservation again and populate
+  reservation = await Reservation.find({ user_id: request.params.id })
+    .populate('user_id', { username: 1, name: 1 })
+    .populate({
+      path: 'screeningTime_id',
+      populate: {
+        path: 'cinema_id',
+        select: 'name',
+      },
+    }).populate({
+      path: 'screeningTime_id',
+      populate: {
+        path: 'movie_id',
+        select: 'title',
+      },
+    });
+  response.status(200).json(reservation);
+});
+
+
 reservationsRouter.get('/', authMiddleware, async (request, response) => {
   const allReservations = await Reservation.find({}).populate('user_id', { username: 1, name: 1 });
   response.status(200).json(allReservations);

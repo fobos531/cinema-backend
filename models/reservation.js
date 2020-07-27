@@ -25,6 +25,9 @@ const reservationSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  ownRating: {
+    type: Number,
+  },
 });
 
 reservationSchema.set('toJSON', {
