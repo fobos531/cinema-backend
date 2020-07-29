@@ -28,6 +28,9 @@ const reservationSchema = new mongoose.Schema({
   ownRating: {
     type: Number,
   },
+  paypalOrderId: {
+    type: String,
+  },
 });
 
 reservationSchema.set('toJSON', {
