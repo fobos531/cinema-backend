@@ -2,7 +2,6 @@
 /* eslint-disable no-param-reassign */
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
-// TO DO - expand schema
 
 const reservationSchema = new mongoose.Schema({
   screeningTime_id: {

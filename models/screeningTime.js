@@ -22,6 +22,12 @@ const screeningTimeSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  seats: [
+    {
+      type: mongoose.Schema.Types.Mixed,
+      required: true,
+    },
+  ],
 });
 
 screeningTimeSchema.set('toJSON', {

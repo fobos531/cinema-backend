@@ -4,12 +4,12 @@ const Cinema = require('../models/cinema');
 const Reservation = require('../models/reservation');
 const authMiddleware = require('../middleware/authentication');
 
-reservationsRouter.patch('/cinema/:id', authMiddleware, async (request, response) => {
-  const cinema = await Cinema.findById(request.params.id);
-  cinema.seats = request.body; // seats array je direktno u request.body
+reservationsRouter.patch('/screeningTime/:id', authMiddleware, async (request, response) => {
+  const screeningTime = await ScreeningTime.findById(request.params.id);
+  screeningTime.seats = request.body; // seats array je direktno u request.body
 
-  await cinema.save();
-  response.json(cinema.seats);
+  await screeningTime.save();
+  response.json(screeningTime.seats);
 });
 
 reservationsRouter.post('/', authMiddleware, async (request, response) => {

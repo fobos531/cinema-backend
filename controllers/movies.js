@@ -7,6 +7,7 @@ const imdb = require('imdb-api');
 const multer = require('multer');
 const cloudinary = require('cloudinary');
 const Movie = require('../models/movie');
+const authMiddleware = require('../middleware/authentication');
 
 const storage = multer.diskStorage({
   filename(req, file, callback) {
@@ -30,7 +31,7 @@ moviesRouter.get('/', async (request, response) => {
 
 moviesRouter.get('/:id', async (request, response) => {
   console.log(request.params.id);
-  const foundMovie = await Movie.findById(request.params.id).populate('cinemas', { name: 1 }).populate('screeningTimes', { datetime_start: 1, datetime_end: 1 });
+  const foundMovie = await Movie.findById(request.params.id).populate('cinemas', { name: 1 }).populate('screeningTimes', { cinema_id: 1, datetime_start: 1, datetime_end: 1 });
   console.log(foundMovie);
   response.status(200).json(foundMovie);
 });
@@ -41,7 +42,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-moviesRouter.post('/', upload.single('moviePoster'), async (request, response) => {
+moviesRouter.post('/', upload.single('moviePoster'), authMiddleware, async (request, response) => {
   let movieData;
   // First, fetch movie data
   try {
@@ -69,29 +70,9 @@ moviesRouter.post('/', upload.single('moviePoster'), async (request, response) =
   response.json(addedMovie);
 });
 
-moviesRouter.delete('/:id', async (request, response) => {
+moviesRouter.delete('/:id', authMiddleware, async (request, response) => {
   await Movie.findOneAndDelete({ _id: request.params.id });
   response.status(204).send({ info: 'movie deleted' });
 });
-
-
-
-moviesRouter.put('/:id', async (request, response) => {
-  const token = getTokenFrom(request);
-  const decodedToken = jwt.verify(token, process.env.SECRET);
-  if (!token || !decodedToken.id) {
-    return response.status(401).send({ error: 'missing or invalid token' });
-  }
-  const newMovie = request.body;
-  const movieToUpdate = await Movie.findByIdAndUpdate(request.params.id, newMovie, { new: true });
-  response.json(movieToUpdate);
-});
-
-moviesRouter.get('/deleteAll', async (request, response) => {
-  await Movie.deleteMany({});
-  response.send(200).json({ status: 'deleted' });
-});
-
-
 
 module.exports = moviesRouter;

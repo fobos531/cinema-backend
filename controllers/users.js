@@ -5,9 +5,6 @@ const User = require('../models/user');
 const mail = require('../utils/mailHelper');
 const authMiddleware = require('../middleware/authentication');
 
-
-
-
 // Add user
 usersRouter.post('/', async (req, res) => {
   const userData = req.body;

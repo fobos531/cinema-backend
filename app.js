@@ -14,7 +14,6 @@ const miscRouter = require('./controllers/misc');
 const reservationsRouter = require('./controllers/reservations');
 const authMiddleware = require('./middleware/authentication');
 
-
 const app = express();
 
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true, useCreateIndex: true })
@@ -25,13 +24,11 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-// I STILL NEED TO START USING AUTHENTICATION
-
 app.use('/api/movies', moviesRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/cinemas', cinemasRouter);
-app.use('/api/screeningtimes', authMiddleware, screeningTimesRouter); // svi requesti na ovaj dio API-ja moraju biti autenticirani
+app.use('/api/screeningtimes', authMiddleware, screeningTimesRouter);
 app.use('/api/misc', miscRouter);
 app.use('/api/reservations', reservationsRouter);
 

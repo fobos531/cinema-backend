@@ -7,7 +7,7 @@ const { GMAIL_USER } = process.env;
 const { GMAIL_PASS } = process.env;
 
 module.exports = {
-  PORT, // PORT je port na kojem je pokrenut server
+  PORT,
   MONGODB_URI,
   SECRET,
   GMAIL_USER,
