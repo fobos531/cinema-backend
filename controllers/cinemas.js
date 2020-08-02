@@ -45,6 +45,7 @@ cinemasRouter.post('/', authMiddleware, upload.single('image'), (req, res) => {
       newCinema.seats = newCinema.seats.concat(newSeat);
     }
     await newCinema.save();
+    res.json(newCinema);
   });
 });
 

@@ -69,7 +69,21 @@ reservationsRouter.patch('/rate/:id', async (request, response) => {
 
 
 reservationsRouter.get('/', authMiddleware, async (request, response) => {
-  const allReservations = await Reservation.find({}).populate('user_id', { username: 1, name: 1 });
+  const allReservations = await Reservation.find({})
+    .populate('user_id', { username: 1, name: 1 })
+    .populate({
+      path: 'screeningTime_id',
+      populate: {
+        path: 'cinema_id',
+        select: 'name',
+      },
+    }).populate({
+      path: 'screeningTime_id',
+      populate: {
+        path: 'movie_id',
+        select: 'title',
+      },
+    });
   response.status(200).json(allReservations);
 });
 
