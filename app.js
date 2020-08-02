@@ -5,7 +5,6 @@ const cors = require('cors');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const config = require('./config/config');
 const moviesRouter = require('./controllers/movies');
 const usersRouter = require('./controllers/users');
 const loginRouter = require('./controllers/login');
@@ -17,7 +16,7 @@ const authMiddleware = require('./middleware/authentication');
 
 const app = express();
 
-mongoose.connect(config.MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true, useCreateIndex: true,
 })
   .then(() => console.log('connected to mongodb'))
