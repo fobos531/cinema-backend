@@ -4,6 +4,7 @@ const User = require('../models/user');
 const isAuthenticated = async (req, res, next) => {
   try {
     const token = req.header('Authorization').replace('Bearer ', '');
+    console.log("token", token);
     const decodedToken = jwt.verify(token, process.env.SECRET);
     if (!token || !decodedToken.id) {
       return res.status(401).json({ error: 'token missing or invalid' });

@@ -43,7 +43,7 @@ usersRouter.put('/', authMiddleware, async (request, response) => {
 });
 
 // Reset user password
-usersRouter.patch('/', authMiddleware, async (request, response) => {
+usersRouter.patch('/', async (request, response) => {
   const user = await User.findOne({ email: request.body.recoveryEmail });
   const newPassword = passwordGenerator.generate({
     length: 10,
