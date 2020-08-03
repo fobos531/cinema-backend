@@ -22,8 +22,7 @@ mongoose.connect(process.env.MONGODB_URI, {
   .then(() => console.log('connected to mongodb'))
   .catch((error) => console.error('cannot connect to mongodb: ', error.message));
 
-app.use(cors());
-app.options('*', cors());
+app.use(cors({ credentials: true, origin: process.env.REACT_APP_URL }));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());

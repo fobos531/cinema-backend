@@ -5,7 +5,7 @@ const app = require('./app');
 
 const server = http.createServer(app);
 const io = socketIo(server);
-io.origins('*:*')
+
 io.on('connection', (socket) => {
   console.log('New client connected');
   socket.on('sendMsgToServer', (message) => {
