@@ -11,3 +11,5 @@ This is the backend part of the application I created for the purposes of my Bac
 - Mongoose - ODM for MongoDB
 - Nodemailer
 - Socket.IO
+
+The whole application and likewise the backend are implemented using MVC arhitectural pattern.
